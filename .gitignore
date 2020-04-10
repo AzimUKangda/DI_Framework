@@ -1,0 +1,22 @@
+/target
+/project/*
+!/project/plugins.sbt
+/classes
+/codemr
+/out
+*.o
+/src/it/resources/data/output/.*csv
+/src/it/resources/config/dbconfig.properties
+/DI_Framework/DI_Framework.iml
+/src/main/resources/properties/dbconfig_private.properties
+logapp.out
+/custom_lib
+
+#Intellij specific
+/.idea
+
+#VS Code specific
+/.metals
+/.bloop
+/.vscode
+/src/main/resources/properties/kafkaconfig_private.properties
