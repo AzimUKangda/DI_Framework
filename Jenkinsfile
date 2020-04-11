@@ -98,7 +98,7 @@ pipeline{
    stage('Deployment'){
     when{
      allof{
-       branch 'feature/*'
+       branch 'productions/*'
      }
     }
     steps{
