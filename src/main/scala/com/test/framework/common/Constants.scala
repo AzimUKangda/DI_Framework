@@ -40,16 +40,15 @@ object Constants {
   val KAFKA_PREFIX = "kafka."
   val UTC_TIMEFORMAT = "YYYY-MM-DD HH24:MI:SS.FF +THZ:TZM"
   val HEADER_LIST = List("service_name",
-  "schema",
-  "table",
-  "optype",
-  "timestamp",
-  "currenttimestamp",
-  "position",
-  "plant",
-  "product",
-  "area",
-  "source_system").map(_.toLowerCase)
-
+                         "schema",
+                         "table",
+                         "optype",
+                         "timestamp",
+                         "currenttimestamp",
+                         "position",
+                         "plant",
+                         "product",
+                         "area",
+                         "source_system").map(_.toLowerCase)
 
 }
