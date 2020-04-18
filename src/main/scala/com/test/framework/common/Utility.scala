@@ -63,24 +63,35 @@ object Utility {
 
   }
 
-  def flattenSchema(schema: StructType, delimiter: String = ".", prefix: String = null): Array[Column] = {
+  def flattenSchema(schema: StructType,
+                    delimiter: String = ".",
+                    prefix: String = null): Array[Column] = {
     schema.fields.flatMap(structField => {
       val (codeColumName, colName) = prefix match {
         case _ if prefix == null => (structField.name, structField.name)
-        case _ => (prefix + "." + structField.name, prefix + delimiter + structField.name)
+        case _ =>
+          (prefix + "." + structField.name,
+           prefix + delimiter + structField.name)
       }
 
       structField.dataType match {
-        case st: StructType => flattenSchema(schema = st, delimiter = delimiter, prefix = colName)
+        case st: StructType =>
+          flattenSchema(schema = st, delimiter = delimiter, prefix = colName)
         case _ => Array(col(codeColumName).alias(colName))
       }
     })
   }
 
   def renameDFColumns(df: DataFrame): DataFrame = {
-    try{
-      df.columns.foldLeft(df){ (newDF,colName) =>
-        newDF.withColumnRenamed(colName,colName.replace(" ", "_").replace(".", "_"))}
+    try {
+      df.columns.foldLeft(df) { (newDF, colName) =>
+        newDF.withColumnRenamed(colName,
+                                colName.replace(" ", "_").replace(".", "_"))
+      }
+    } catch {
+      case _: Exception =>
+        throw new Exception(
+          s"Unable to rename Columns of the DataFrame: ${df.schema.mkString(",")}")
+    }
   }
-}
 }
