@@ -1,13 +1,12 @@
 package com.test.framework.common
 
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.{Date, TimeZone}
 
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.StructType
-
 import com.test.framework.common.Context.spark.implicits._
 import com.test.framework.common.Constants._
 
@@ -93,5 +92,43 @@ object Utility {
         throw new Exception(
           s"Unable to rename Columns of the DataFrame: ${df.schema.mkString(",")}")
     }
+  }
+
+  def createCastedColumn(
+      dfToBeCasted: DataFrame,
+      flattenSchemaJsonMap: Map[String, String]): DataFrame = {
+    var outputDF: DataFrame = dfToBeCasted
+    try {
+      flattenSchemaJsonMap.foreach { x =>
+        val name = "`" + x._1 + "`"
+        outputDF = x._2 match {
+          case _ if x._2.equalsIgnoreCase("binary") =>
+            outputDF.withColumn(s"afterCasting_${x._1}",
+                                unbase64(dfToBeCasted(name)))
+          case _ if x._2.equalsIgnoreCase("timestamp") =>
+            outputDF.withColumn(s"afterCasting_${x._1}",
+                                dfToBeCasted(name).cast("string"))
+          case castTo =>
+            outputDF.withColumn(s"afterCasting_${x._1}",
+                                dfToBeCasted(name).cast(castTo))
+        }
+      }
+    } catch {
+      case _: Exception =>
+        throw new Exception(
+          s"Creating Casted Column, unknown dataType found in masterSchema")
+    }
+    outputDF
+  }
+
+  def renameSrcDFtoTargetDF(df: DataFrame,
+                            columnMap: Map[String, String]): DataFrame = {
+    columnMap.foldLeft(df)((df, col) => df.withColumnRenamed(col._1, col._2))
+  }
+
+  def currentTimeInMilliUTC: String = {
+    val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+    sdf.format(new Date())
   }
 }
