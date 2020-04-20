@@ -170,7 +170,7 @@ object Utility {
       commitEndOffsetMapFromDB = commitEndOffsetMapFromDB ++ endOffsetMapFromKafka
     } else
       commitEndOffsetMapFromDB = endOffsetMapFromKafka
-    OffsetUtility.offsetStringFromMap(commitEndOffsetMapFromDB, sourceName)
+    OffsetUtility.offsetStringFromMap(commitEndOffsetMapFromDB, sourceName) 
 
   }
 }
