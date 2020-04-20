@@ -131,4 +131,46 @@ object Utility {
     sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
     sdf.format(new Date())
   }
+
+  def getOffsetString(df: DataFrame): String = {
+    val offsetDf =
+      df.groupBy(col("topic"), col("partition")).agg(max("offset").as("offset"))
+
+    val listOfPartitionOffsetMap = offsetDf
+      .sort(col("partition"))
+      .map { x =>
+        (x(0).toString, s""""${x(1)}":${x(2)}""")
+      }
+      .collect()
+      .toList
+
+    val offsetValue = listOfPartitionOffsetMap
+      .groupBy(_._1)
+      .map(x => x._2.reduce((x, y) => (x._1, x._2 + "," + y._2)))
+      .toList
+      .head
+    "{\"" + offsetValue._1 + "\":{" + offsetValue._2 + "}}"
+  }
+
+  def getCommitEndOffset(endOffset: String,
+                         endOffsetFromSource: String,
+                         sourceName: String): String = {
+    val endOffsetMap = OffsetUtility.mapFromOffsetString(endOffset)
+    val endOffsetMapFromKafka =
+      OffsetUtility.mapFromOffsetString(endOffsetFromSource)
+
+    var commitEndOffsetMapFromDB: Map[Int, Long] = Map()
+
+    val keyDifference = endOffsetMap.keySet.toList diff endOffsetMapFromKafka.keySet.toList
+    if (keyDifference.nonEmpty) {
+      keyDifference.foreach { key =>
+        commitEndOffsetMapFromDB = commitEndOffsetMapFromDB ++ Map(
+          key -> endOffsetMap(key))
+      }
+      commitEndOffsetMapFromDB = commitEndOffsetMapFromDB ++ endOffsetMapFromKafka
+    } else
+      commitEndOffsetMapFromDB = endOffsetMapFromKafka
+    OffsetUtility.offsetStringFromMap(commitEndOffsetMapFromDB, sourceName)
+
+  }
 }
