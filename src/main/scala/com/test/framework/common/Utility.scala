@@ -166,11 +166,12 @@ object Utility {
       keyDifference.foreach { key =>
         commitEndOffsetMapFromDB = commitEndOffsetMapFromDB ++ Map(
           key -> endOffsetMap(key))
+
       }
       commitEndOffsetMapFromDB = commitEndOffsetMapFromDB ++ endOffsetMapFromKafka
     } else
       commitEndOffsetMapFromDB = endOffsetMapFromKafka
-    OffsetUtility.offsetStringFromMap(commitEndOffsetMapFromDB, sourceName) 
+    OffsetUtility.offsetStringFromMap(commitEndOffsetMapFromDB, sourceName)
 
   }
 }
