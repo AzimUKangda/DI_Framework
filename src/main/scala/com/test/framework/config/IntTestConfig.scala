@@ -1,4 +1,4 @@
-package config
+package com.test.framework.config
 
 class IntTestConfig extends GenericConfig {
   //common variable

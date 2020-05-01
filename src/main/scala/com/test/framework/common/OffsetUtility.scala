@@ -1,12 +1,10 @@
 package com.test.framework.common
 
 import java.util.ArrayList
+
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kakfa.common.TopicPartition
-import scala.collection.JavaConversions._
+
 import scala.util.parsing.json.JSON
-
-
 
 object OffsetUtility {
 

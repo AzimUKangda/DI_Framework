@@ -1,4 +1,4 @@
-package config
+package com.test.framework.config
 
 class KafkaTopicConfig extends GenericConfig {
   var process: String = _

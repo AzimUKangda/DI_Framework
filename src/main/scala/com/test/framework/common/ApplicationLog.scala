@@ -1,5 +1,7 @@
 package com.test.framework.common
+
 import org.apache.log4j.Logger
+
 object ApplicationLog {
 
   val log: Logger = Logger.getLogger(getClass.getName)

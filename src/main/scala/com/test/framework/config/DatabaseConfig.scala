@@ -1,4 +1,4 @@
-package config
+package com.test.framework.config
 
 class DatabaseConfig extends GenericConfig {
   var driverDbRawdata: String = _

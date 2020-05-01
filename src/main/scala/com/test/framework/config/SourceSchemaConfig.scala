@@ -1,4 +1,4 @@
-package config
+package com.test.framework.config
 
 class SourceSchemaConfig extends GenericConfig {
   var pipelineIdentifier: String = _

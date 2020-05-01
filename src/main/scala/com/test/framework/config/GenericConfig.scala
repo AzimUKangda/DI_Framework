@@ -1,4 +1,4 @@
-package config
+package com.test.framework.config
 
 import com.test.framework.common.Utility
 

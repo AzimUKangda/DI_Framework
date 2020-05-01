@@ -1,4 +1,4 @@
-package config
+package com.test.framework.config
 
 class MetadataHubConfig extends GenericConfig {
   var coreJobActivate: String = _
