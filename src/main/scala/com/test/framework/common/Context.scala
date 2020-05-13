@@ -5,12 +5,12 @@ import org.apache.spark.sql.SparkSession
 
 object Context {
 
-  lazy val spark = {
-    if(ApplicationContextProperties.runMode == "local") SparkSession.builder().master("local").getOrCreate()
+  val hdfs = FileSystem.get(getSparkSession().sparkContext.hadoopConfiguration)
+
+  def getSparkSession(): SparkSession = {
+    if (ApplicationContextProperties.runMode == "local")
+      SparkSession.builder().master("local").getOrCreate()
     else SparkSession.builder().getOrCreate()
   }
-
-  val hdfs = FileSystem.get(spark.sparkContext.hadoopConfiguration)
-
 
 }
