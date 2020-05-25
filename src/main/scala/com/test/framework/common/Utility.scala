@@ -3,12 +3,23 @@ package com.test.framework.common
 import java.text.SimpleDateFormat
 import java.util.{Date, TimeZone}
 
+import com.google.gson.Gson
 import com.test.framework.common.Constants.SABA_VALUE_COL
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{Column, DataFrame}
+import scala.reflect.ClassTag
+
+case class ErrorInfoClass(process:String,
+                          process_step:String,
+                          attribute:String,
+                          value:String,
+                          error:String,
+                          source:String)
 
 object Utility {
+
+  val gson = new Gson()
 
   /**
     * This method convert a string from camel case to point case
@@ -172,4 +183,21 @@ object Utility {
     OffsetUtility.offsetStringFromMap(commitEndOffsetMapFromDB, sourceName)
 
   }
+
+  def flattenJson(jsonMap:Map[String,Any])(
+                 implicit tag:ClassTag[Map[String,Any]]
+  ):Map[String,Any]={
+    jsonMap.flatten{
+      case (key,map:Map[String,Any])=>flattenJson(map.map(x=>(key+"_"+x._1,x._2)))
+      case (key,value) => Map(key->value)
+    }.toMap
+  }
+
+  def getInvalidNullRecords(inputDF:DataFrame,columnsToValidate:List[String]):DataFrame={
+    var filterColumns = List[String]()
+    columnsToValidate.foreach(r=>if(inputDF.columns.contains(r)){filterColumns=r::filterColumns})
+    val filterCondition = filterColumns.map(c=>col(c).isNull).reduce(_ || _)
+    inputDF.filter(filterCondition)
+  }
+
 }

@@ -7,7 +7,7 @@ import org.apache.log4j.Logger
 import org.apache.spark.sql.functions.udf
 import java.text.SimpleDateFormat
 import java.util.Base64
-
+import com.test.framework.common.JSonParser
 import com.test.framework.common.ErrorInfoClass
 import com.test.framework.common.Constants._
 import com.test.framework.common.Utility._
@@ -77,7 +77,7 @@ object DataValidator {
       if (beforeCasting != null && afterCasting == null) {
         result = errorInfo ++ Seq(
           gson.toJson(
-            ErorInfoClass(process,
+            ErrorInfoClass(process,
                           "DataType Casting",
                           columnName,
                           beforeCasting,
@@ -92,7 +92,7 @@ object DataValidator {
     val dataJsonMap =
       parseFull(columnName).getOrElse(Map()).asInstanceOf[Map[String, Any]]
     val dataMap = flattenJson(dataJsonMap)
-    val after = dataMap.fliter(c => c._1.contains("after_") && c._2 == null)
+    val after = dataMap.filter(c => c._1.contains("after_") && c._2 == null)
     after.keysIterator.toSeq
   })
 
@@ -117,7 +117,7 @@ object DataValidator {
       dfCol
   })
 
-  private val validateIntervalds = udf(
+  private val validateTypeIntervalds = udf(
     (dfCol: String, dayPrecision: String, fractionSeconds: String) => {
       val reg =
         s"(^[+-]?\\d{1,$dayPrecision} (?:\\d|[01]\\d|2[0-3]):[0-5]?[0-9]:[0-5]?[0-9](?:\\.\\d{1,$fractionSeconds})?$$"
@@ -287,7 +287,7 @@ object DataValidator {
         }
         case typeCol if targetType.startsWith("VARCHAR") => {
           val matches = VARCHAR_PATTERN.r.findAllMatchIn(typeCol).next()
-          outputDF.withColumn("sabaType_"+dfCol,validateTypeVarchar(outputDF(dfCol),lit(matches.group(1).to Int)))
+          outputDF.withColumn("sabaType_"+dfCol,validateTypeVarchar(outputDF(dfCol),lit(matches.group(1).toInt)))
         }
         case _ if targetType.equalsIgnoreCase("CLOB") => {
           outputDF.withColumn("sabaType_"+dfCol,validateTypeClob(outputDF(dfCol)))
@@ -323,7 +323,7 @@ object DataValidator {
     val jsonToSchema = udf((s:String, errorInfo:Seq[String]) => {
       val dataJsonMap = JSonParser.parse(s).getOrElse(Map()).asInstanceOf[Map[String,Any]]
       val dataMap = flattenJson(dataJsonMap)
-      val dataKeyList = dataMap.keyIterator.toList
+      val dataKeyList = dataMap.keysIterator.toList
 
       val diff = dataKeyList.diff(sourceSchema.keysIterator.toList)
       if(diff.nonEmpty){
