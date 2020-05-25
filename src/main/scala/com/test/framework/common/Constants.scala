@@ -39,6 +39,13 @@ object Constants {
   val IS_FALSE = "FALSE"
   val KAFKA_PREFIX = "kafka."
   val UTC_TIMEFORMAT = "YYYY-MM-DD HH24:MI:SS.FF +THZ:TZM"
+  val INV_RECORD_TABLE_COL = "TARGET_TABLE"
+  val INV_RECORD_TOPIC_COL = "SOURCE_TOPIC"
+  val INV_RECORD_DATE_COL = "LOAD_DATE"
+  val INV_RECORD_ERROR_COL = "ERROR"
+  val INV_RECORD_MESSAGE_COL = "ORIGINAL RECORD"
+  val ERROR_MSG_INV_RECORD = "Missing key or control attribute"
+  val THRASH_TABLE_NAME = "SABA_RAWVAULT_INVALID_RECORDS"
   val HEADER_LIST = List("service_name",
                          "schema",
                          "table",
