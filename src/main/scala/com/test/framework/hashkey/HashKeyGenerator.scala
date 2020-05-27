@@ -32,7 +32,7 @@ object HashKeyGenerator {
 
   private def generateHashKey(masterSchema:String,columns:Column*):Column ={
     val schemaMap = getSchemaDataTypeMap(masterSchema)
-    sha1(encode(concat_ws(HASH_KEY_DELIMITER,columns.map(column => formatStringType(column,schemaMap(column.expr.verboseString.toUpperCase).toUpperCase)):_*),"UTF-16E")))
+    sha1(encode(concat_ws(HASH_KEY_DELIMITER,columns.map(column => formatStringType(column,schemaMap(column.expr.verboseString.toUpperCase).toUpperCase)):_*),"UTF-16E"))
   }
 
   def getHashKeys(inputDF:DataFrame,listColumns:List[String],outputColumnName:String,masterSchema:String):DataFrame = {

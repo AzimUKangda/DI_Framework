@@ -4,6 +4,7 @@ import java.sql.{Connection, SQLException}
 
 import com.test.framework.common.Utility
 import com.test.framework.common.Constants._
+import com.test.framework.enums.DBConnectionEnum
 import org.apache.log4j.Logger
 
 class DBQueryExecutor {
